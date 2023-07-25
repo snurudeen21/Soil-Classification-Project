@@ -101,7 +101,7 @@ def generate():
         ("GW: Well-graded gravels and gravel-sand mixtures, little or no fines", "GP: Poorly-graded gravels and gravel-sand mixtures, little or no fines", "GM: Silty gravels, gravel-sand-silt mixtures", "GC: Clayey gravels, gravel-sand-clay mixtures"),
         ("SW: Well-graded sands and gravelly sands, little or no fines", "SP: Poorly-graded sands and gravelly sands, little or no fines", "SM: Silty sands", "SC: Clayey sands"),
         ("CL: Inorganic Clays of low to medium Plasticity", "ML: Inorganic Silts, very fine sand, Rock Flour of medium to low plasticity or OL: Organic Silt and Organic Silt Clay of low Plasticity"),
-        ("CH: Inorganic Clay of high Plasticty", "MH: Inorganic Silt, Micaceous, Diatomaceous fine sand or silt of high Plasticity\n or OH: Organic Clay of medium to high Plasticity")
+        ("CH: Inorganic Clay of high Plasticty", "MH: Inorganic Silt, Micaceous, Diatomaceous fine sand or silt of high Plasticity or OH: Organic Clay of medium to high Plasticity")
     ]
 
 
