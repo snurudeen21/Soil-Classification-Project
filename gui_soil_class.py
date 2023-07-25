@@ -1,3 +1,4 @@
+#Importing all packages
 from tkinter import *
 from PIL import ImageTk,Image
 from tkinter import filedialog, messagebox
@@ -10,12 +11,14 @@ import pandas as pd
 import webbrowser
 #from ctypes import windll, byref, sizeof, c_int
 
+#Creating Window for GUI
 window = Tk()
 window.title("SoilReport Lab")
 window.iconbitmap("C:/Users/user/Desktop/project_Soil_Class/app_icon.ico")
 window.geometry("380x140")
 window.resizable(0,0)
 
+#I was hoping to add color to my Title bar but it didn't because i had Windows 10. This trick works on Windows 11
 '''HWND = windll.user32.GetParent(window.winfo_id())
 title_bar_color = 0x00FF0000
 windll.dwmapi.DwmSetWindowAttribute(
@@ -25,7 +28,7 @@ windll.dwmapi.DwmSetWindowAttribute(
     sizeof(c_int)
 )'''
 
-
+# Create entry fields
 entry = Entry(window, width=40)
 entry.grid(row=1, column=2, columnspan=2, padx=10, pady=10)
 
@@ -36,7 +39,7 @@ entry2 = Entry(window)
 entry2.grid(row=3, column=2, padx=10, pady=[10,15], sticky='W')
 
 
-
+#Create Function to laod csv file path into the interface
 def open():
     entry.delete(0, END)
     window.file_path = filedialog.askopenfilename(initialdir="C:/", title="Select A File", filetypes=(("csv files", "*.csv"),("all files", "*.*")))
@@ -47,7 +50,7 @@ def open():
         entry.insert(0, window.file_path)
 
 
-
+# Create a function to Generate PdF report
 def generate():
     path = entry.get()
     file = pd.read_csv(path)
@@ -260,6 +263,7 @@ def generate():
                 USCS_soil_classification = USCS[2][0]
             else:
                 USCS_soil_classification = USCS[2][1]
+                
         elif liquid_limit > 50:
             if graph_check > 0.73:
                 USCS_soil_classification = USCS[3][0]
@@ -411,18 +415,12 @@ def generate():
     except PermissionError:
         messagebox.showwarning("Warning!", "Please close the file in your pdf viewer\n" + "if opened and rerun the program")
         
-
-'''def open():
-	global my_image
-	root.filename = filedialog.askopenfilename(initialdir="/gui/images", title="Select A File", filetypes=(("jpg files", "*.jpg"),("all files", "*.*")))
-	my_label = Label(root, text=root.filename).pack()
-	my_image = ImageTk.PhotoImage(Image.open(root.filename))
-	my_image_label = Label(image=my_image).pack()'''
-
+# A function to launch Youtube page by clicking on Help on the Interface
 def help_me(event):
     tutorial_video = ( "https://youtube.com/shorts/nvsUygpBSR8?feature=share")
     webbrowser.open_new_tab(tutorial_video)
 
+# A function to launch About page
 def about(event):
     new_window = Toplevel()
     new_window.title("About")
@@ -442,6 +440,7 @@ def about(event):
         font=("Georgia", int(16.0)))
     info_text.pack()
 
+# Creating My labels
 label_1 = Label(window, text= "File Path", font=("Times","10", "bold"), padx=[5])
 label_1.grid(row=1,column=1)
 
@@ -459,10 +458,11 @@ label_5 = Label(window, text= "Help", font=("Times","10", "bold"), fg='blue')
 label_5.grid(row=0,column=2, sticky='W')
 label_5.bind('<Button-1>',help_me)
 
+# Creating file picker
 path_image = ImageTk.PhotoImage(Image.open("C:/Users/user/Desktop/project_Soil_Class/path_picker.ico"))
 
 
-
+# Create Buttons and link to their respective functions
 button_1 = Button(
     window, 
     image=path_image,
@@ -483,15 +483,6 @@ button_2 = Button(
     command=generate
 )
 button_2.grid(row=3,column=3, padx=5, pady=5)
-
-
-
-
-
-
-
-
-
 
 
 window.mainloop()
