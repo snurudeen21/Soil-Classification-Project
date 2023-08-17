@@ -417,7 +417,7 @@ def generate():
         
 # A function to launch Youtube page by clicking on Help on the Interface
 def help_me(event):
-    tutorial_video = ( "https://youtube.com/shorts/nvsUygpBSR8?feature=share")
+    tutorial_video = ("https://youtu.be/GrKoRnCG0Ec")
     webbrowser.open_new_tab(tutorial_video)
 
 # A function to launch About page
