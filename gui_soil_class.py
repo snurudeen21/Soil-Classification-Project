@@ -73,13 +73,13 @@ def generate():
     #Storing %passing for sieve sizes: 5mm, 2mm, 0.425 and 0.075
     data_value = []      
     for row in data:
-        if row[0] in [5, 2, 0.425, 0.075]:
+        if row[0] in [5, 4.75, 2, 0.425, 0.075]:
             data_value.append(row[-1])
 
     #Storing %cumm_retained for sieve sizes: 5mm, 2.36mm, 1.18mm, 0.6mm, 0.3mm and 0.15mm
     data_value_ret = []      
     for row in data:
-        if row[0] in [5, 2.36, 1.18, 0.6, 0.3, 0.15]:
+        if row[0] in [5, 4.75, 2.36, 1.18, 0.6, 0.3, 0.15]:
             data_value_ret.append(row[-2])
 
     sum = 0
@@ -92,7 +92,10 @@ def generate():
     AASHTO = [
         ("A-1-a: Stone Fragments (Gravel and Sand). Rating: Excellent to Good", "A-1-b: Stone Fragments (Gravel and Sand). Rating: Excellent to Good"),
         "A-3: Fine Sand. Rating: Excellent to Good",
-        ("A-2-4: Silty or Clayey Gravel Sand. Rating: Good", "A-2-5: Silty or Clayey Gravel Sand. Rating: Good", "A-2-6: Silty or Clayey Gravel Sand. Rating: Good", "A-2-7: Silty or Clayey Gravel Sand. Rating: Good"),
+        ("A-2-4: Silty or Clayey Gravel Sand. Rating: Good", 
+         "A-2-5: Silty or Clayey Gravel Sand. Rating: Good", 
+         "A-2-6: Silty or Clayey Gravel Sand. Rating: Good", 
+         "A-2-7: Silty or Clayey Gravel Sand. Rating: Good"),
         "A-4: Silty Soil. Rating: Fair", "A-5: Silty Soil. Rating: Fair",
         "A-6: Silty Soil. Rating: Fair",
         ("A-7-5: Clayey Soil. Rating: Poor", "A-7-6: Clayey Soil. Rating: Poor")
@@ -101,10 +104,21 @@ def generate():
 
     #USCS Classification list
     USCS = [
-        ("GW: Well-graded gravels and gravel-sand mixtures, little or no fines", "GP: Poorly-graded gravels and gravel-sand mixtures, little or no fines", "GM: Silty gravels, gravel-sand-silt mixtures", "GC: Clayey gravels, gravel-sand-clay mixtures"),
-        ("SW: Well-graded sands and gravelly sands, little or no fines", "SP: Poorly-graded sands and gravelly sands, little or no fines", "SM: Silty sands", "SC: Clayey sands"),
-        ("CL: Inorganic Clays of low to medium Plasticity", "ML: Inorganic Silts, very fine sand, Rock Flour of medium to low plasticity or OL: Organic Silt and Organic Silt Clay of low Plasticity"),
-        ("CH: Inorganic Clay of high Plasticty", "MH: Inorganic Silt, Micaceous, Diatomaceous fine sand or silt of high Plasticity or OH: Organic Clay of medium to high Plasticity")
+        ("GW: Well-graded gravels and gravel-sand mixtures, little or no fines", 
+         "GP: Poorly-graded gravels and gravel-sand mixtures, little or no fines", 
+         "GM: Silty gravels, gravel-sand-silt mixtures", "GC: Clayey gravels, gravel-sand-clay mixtures",
+         "GM - GC: Silty gravel with clay", "GW - GM: Well graded gravel with silt"
+         ),
+        ("SW: Well-graded sands and gravelly sands, little or no fines", 
+         "SP: Poorly-graded sands and gravelly sands, little or no fines", 
+         "SM: Silty sands", "SC: Clayey sands", 
+         "SM - SC: Silty sand with clay",
+         "SP - SC: Poorly graded sand with clay"),
+        ("CL: Inorganic Clays of low to medium Plasticity",
+         "ML: Inorganic Silts, very fine sand, Rock Flour of medium to low plasticity or\n OL: Organic Silt and Organic Silt Clay of low Plasticity",
+         "CL - ML: Silty Clay with Sand"),
+        ("CH: Inorganic Clay of high Plasticty", 
+         "MH: Inorganic Silt, Micaceous, Diatomaceous fine sand or silt of high Plasticity or\n OH: Organic Clay of medium to high Plasticity")
     ]
 
 
@@ -235,10 +249,10 @@ def generate():
                 elif graph_check > 0.73 and PI > 7:
                     USCS_soil_classification = USCS[0][3]
                 else:
-                    USCS_soil_classification = USCS[0][2],"-",USCS[0][3]
+                    USCS_soil_classification = USCS[0][4]
                 
             elif passing_sieve_75micro_m >= 5 and passing_sieve_75micro_m <= 12:
-                USCS_soil_classification = USCS[0][0],"-",USCS[0][2]
+                USCS_soil_classification = USCS[0][5]
 
         else:
             if passing_sieve_75micro_m < 5:
@@ -253,13 +267,15 @@ def generate():
                 elif graph_check > 0.73 and PI > 7:
                     USCS_soil_classification = USCS[1][3]
                 else:
-                    USCS_soil_classification = USCS[1][2],"-",USCS[1][3]
+                    USCS_soil_classification = USCS[1][4]
             elif passing_sieve_75micro_m >= 5 and passing_sieve_75micro_m <= 12:
-                USCS_soil_classification = USCS[1][1],"-",USCS[1][3]
+                USCS_soil_classification = USCS[1][5]
 
     else:
         if liquid_limit <= 50:
-            if graph_check > 0.73:
+            if PI >= 4 and PI <= 7 and liquid_limit >= 10 and liquid_limit <= 30 and graph_check >= 0.73:
+                USCS_soil_classification = USCS[2][2]
+            elif graph_check > 0.73:
                 USCS_soil_classification = USCS[2][0]
             else:
                 USCS_soil_classification = USCS[2][1]
@@ -368,7 +384,12 @@ def generate():
 
         pdf.setFont("Times-Roman", 15)
         pdf.setFillColor(colors.blue)
-        pdf.drawString(100, 120, soil_list[1])
+        if soil_list[1] == USCS[2][1] or soil_list[1] == USCS[3][1]:
+            text = soil_list[1].split("\n")
+            pdf.drawString(100, 120, text[0])
+            pdf.drawString(100, 100, text[1])
+        else:
+            pdf.drawString(100, 120, soil_list[1])
 
     except NameError:
         try:
@@ -390,7 +411,12 @@ def generate():
 
             pdf.setFont("Times-Roman", 15)
             pdf.setFillColor(colors.blue)
-            pdf.drawString(100, 180, soil_list[1])
+            if soil_list[1] == USCS[2][1] or soil_list[1] == USCS[3][1]:
+                text = soil_list[1].split("\n")
+                pdf.drawString(100, 180, text[0])
+                pdf.drawString(100, 160, text[1])
+            else:
+                pdf.drawString(100, 180, soil_list[1])
 
         except NameError:
             pdf.setFont("Times-Roman", 15)
@@ -407,7 +433,12 @@ def generate():
 
             pdf.setFont("Times-Roman", 15)
             pdf.setFillColor(colors.blue)
-            pdf.drawString(100, 210, soil_list[1])
+            if soil_list[1] == USCS[2][1] or soil_list[1] == USCS[3][1]:
+                text = soil_list[1].split("\n")
+                pdf.drawString(100, 210, text[0])
+                pdf.drawString(100, 190, text[1])
+            else:
+                pdf.drawString(100, 210, soil_list[1])
 
     # Saving the Report and Catering for scenario when error pops up.
     try:
@@ -417,7 +448,7 @@ def generate():
         
 # A function to launch Youtube page by clicking on Help on the Interface
 def help_me(event):
-    tutorial_video = ("https://youtu.be/GrKoRnCG0Ec")
+    tutorial_video = ( "https://youtu.be/GrKoRnCG0Ec")
     webbrowser.open_new_tab(tutorial_video)
 
 # A function to launch About page
